@@ -1,0 +1,42 @@
+FROM php:8.3-fpm-alpine
+
+# System dependencies
+RUN apk add --no-cache \
+    nginx \
+    bash \
+    curl \
+    libzip-dev \
+    oniguruma-dev \
+    icu-dev \
+    shadow
+
+# PHP extensions
+RUN docker-php-ext-configure intl \
+ && docker-php-ext-install -j$(nproc) \
+    pdo_mysql \
+    mbstring \
+    zip \
+    bcmath \
+    intl \
+ && docker-php-ext-enable opcache
+
+# Install Composer
+COPY --from=composer:2 /usr/bin/composer /usr/bin/composer
+
+WORKDIR /var/www/html
+
+COPY docker/nginx.conf /etc/nginx/nginx.conf
+COPY docker/entrypoint.sh /entrypoint.sh
+RUN chmod +x /entrypoint.sh
+
+RUN mkdir -p /run/nginx
+
+# Fix Symfony dir permissions
+RUN mkdir -p var \
+ && chown -R www-data:www-data var
+
+# Dev: disable opcache to avoid staleness
+RUN { echo 'opcache.enable=0'; echo 'opcache.enable_cli=0'; } > /usr/local/etc/php/conf.d/docker-dev-opcache.ini
+
+EXPOSE 8080
+ENTRYPOINT ["/entrypoint.sh"]
