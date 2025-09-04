@@ -5,6 +5,7 @@ namespace App\Entity;
 use App\Enum\Currency;
 use App\Enum\OrderStatus;
 use App\Repository\OrderRepository;
+use App\Value\Money;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
@@ -67,6 +68,20 @@ class Order
     public function getTotalCents(): int
     {
         return $this->totalCents;
+    }
+
+    public function setTotal(Money $money): self
+    {
+        if ($money->getCurrency() !== $this->currency) {
+            throw new \InvalidArgumentException('Currency mismatch for order total');
+        }
+        $this->totalCents = $money->getCents();
+        return $this;
+    }
+
+    public function getTotal(): Money
+    {
+        return Money::ofCents($this->totalCents, $this->currency);
     }
 
     public function setTotalCents(int $totalCents): self

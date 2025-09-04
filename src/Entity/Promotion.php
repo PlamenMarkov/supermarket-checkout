@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\PromotionType;
 use App\Repository\PromotionRepository;
+use App\Value\Money;
 use App\Value\Quantity;
 use Doctrine\ORM\Mapping as ORM;
 
@@ -89,10 +90,21 @@ class Promotion
         return $this->specialPriceCents;
     }
 
+    public function getSpecialPrice(): Money
+    {
+        return Money::ofCents($this->specialPriceCents);
+    }
+
     public function setSpecialPriceCents(int $specialPriceCents): self
     {
         $this->specialPriceCents = $specialPriceCents;
 
+        return $this;
+    }
+
+    public function setSpecialPrice(Money $money): self
+    {
+        $this->specialPriceCents = $money->getCents();
         return $this;
     }
 

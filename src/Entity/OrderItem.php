@@ -4,6 +4,7 @@ namespace App\Entity;
 
 use App\Enum\Currency;
 use App\Repository\OrderItemRepository;
+use App\Value\Money;
 use App\Value\Quantity;
 use App\Value\Sku;
 use Doctrine\ORM\Mapping as ORM;
@@ -142,9 +143,22 @@ class OrderItem
         return $this->unitPriceCents;
     }
 
+    public function getUnitPrice(): Money
+    {
+        return Money::ofCents($this->unitPriceCents, $this->currency);
+    }
+
     public function setUnitPriceCents(int $unitPriceCents): self
     {
         $this->unitPriceCents = $unitPriceCents;
+
+        return $this;
+    }
+
+    public function setUnitPrice(Money $money): self
+    {
+        $this->validateCurrency($money);
+        $this->unitPriceCents = $money->getCents();
 
         return $this;
     }
@@ -173,15 +187,39 @@ class OrderItem
         return $this;
     }
 
+    public function setBundlePrice(?Money $money): self
+    {
+        if ($money === null) {
+            $this->bundlePriceCents = null;
+            return $this;
+        }
+        $this->validateCurrency($money);
+        $this->bundlePriceCents = $money->getCents();
+
+        return $this;
+    }
+
     public function getLineTotalCents(): int
     {
         return $this->lineTotalCents;
+    }
+
+    public function getLineTotal(): Money
+    {
+        return Money::ofCents($this->lineTotalCents, $this->currency);
     }
 
     public function setLineTotalCents(int $lineTotalCents): self
     {
         $this->lineTotalCents = $lineTotalCents;
 
+        return $this;
+    }
+
+    public function setLineTotal(Money $money): self
+    {
+        $this->validateCurrency($money);
+        $this->lineTotalCents = $money->getCents();
         return $this;
     }
 
@@ -195,5 +233,12 @@ class OrderItem
         $this->currency = $currency;
 
         return $this;
+    }
+
+    private function validateCurrency(Money $money): void
+    {
+        if ($money->getCurrency() !== $this->currency) {
+            throw new \InvalidArgumentException('Currency mismatch for bundle price');
+        }
     }
 }

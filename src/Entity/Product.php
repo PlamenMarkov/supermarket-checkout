@@ -3,6 +3,7 @@
 namespace App\Entity;
 
 use App\Repository\ProductRepository;
+use App\Value\Money;
 use App\Value\Sku;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -80,6 +81,17 @@ class Product
     public function getUnitPriceCents(): int
     {
         return $this->unitPriceCents;
+    }
+
+    public function getUnitPrice(): Money
+    {
+        return Money::ofCents($this->unitPriceCents);
+    }
+
+    public function setUnitPrice(Money $money): self
+    {
+        $this->unitPriceCents = $money->getCents();
+        return $this;
     }
 
     public function setUnitPriceCents(int $unitPriceCents): self
