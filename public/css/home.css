@@ -1,0 +1,56 @@
+form {
+    display: flex;
+    gap: .5rem;
+    align-items: center;
+    margin: 1rem 0;
+}
+
+label {
+    font-weight: 600;
+}
+
+input[type="text"] {
+    flex: 1;
+    padding: .5rem .6rem;
+    font-size: 1rem;
+}
+
+button {
+    padding: .55rem .9rem;
+    font-size: 1rem;
+    cursor: pointer;
+}
+
+.error {
+    color: #b00020;
+    background: #fde7ea;
+    border: 1px solid #f5c2c7;
+    padding: .5rem .75rem;
+    border-radius: 4px;
+    margin: .5rem 0 1rem;
+}
+
+.results h3 {
+    margin: 1rem 0 .5rem;
+}
+
+.results-table {
+    width: 100%;
+    border-collapse: collapse;
+}
+
+.results-table th, .results-table td {
+    border: 1px solid #ddd;
+    padding: .4rem .5rem;
+}
+
+.results-table th {
+    background: #f7f7f7;
+    text-align: left;
+}
+
+code {
+    background: #f2f2f2;
+    padding: 0 .25rem;
+    border-radius: 3px;
+}

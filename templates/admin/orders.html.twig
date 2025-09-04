@@ -1,0 +1,43 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — Orders{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="/js/admin-orders.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AdminOrders && typeof AdminOrders.init === 'function') {
+        AdminOrders.init();
+      }
+    });
+  </script>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="actions">
+      <button type="button" class="btn" onclick="location.href='/'">← Back to Home</button>
+      <button type="button" class="btn" onclick="location.href='/admin/products'">Go to Products</button>
+      <button type="button" class="btn" onclick="location.href='/admin/promotions'">Go to Promotions</button>
+    </div>
+    <h1>Orders Management</h1>
+
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>Created</th>
+          <th class="num">Items</th>
+          <th class="num">Total</th>
+          <th>Status</th>
+        </tr>
+      </thead>
+      <tbody id="orders-tbody"></tbody>
+    </table>
+  </div>
+{% endblock %}

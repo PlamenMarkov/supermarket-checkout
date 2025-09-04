@@ -1,0 +1,91 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — Products{% endblock %}
+
+{% block stylesheets %}
+    {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="/js/admin-products.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AdminProducts && typeof AdminProducts.init === 'function') {
+        AdminProducts.init();
+      }
+    });
+  </script>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="actions">
+      <button type="button" class="btn" onclick="location.href='/'">Back to Home</button>
+      <button type="button" class="btn" onclick="location.href='/admin/orders'">Go to Orders</button>
+      <button type="button" class="btn" onclick="location.href='/admin/promotions'">Go to Promotions</button>
+    </div>
+    <h1>Products Management</h1>
+
+    <div class="actions">
+      <button id="add-product-btn" class="btn">Add Product</button>
+    </div>
+    <table>
+      <thead>
+        <tr>
+          <th>ID</th>
+          <th>SKU</th>
+          <th>Name</th>
+          <th class="num">Unit Price</th>
+          <th>Active Promotions</th>
+          <th>Operations</th>
+        </tr>
+      </thead>
+      <tbody id="products-tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="product-modal" class="modal">
+    <div class="dialog">
+      <div class="header">
+        <h3 id="product-modal-title">Product</h3>
+        <button id="product-modal-close" class="close">✕</button>
+      </div>
+      <form id="product-form">
+        <div class="form-row">
+          <label for="sku">SKU</label>
+          <input type="text" id="sku" name="sku" required>
+        </div>
+        <div class="form-row">
+          <label for="name">Name</label>
+          <input type="text" id="name" name="name" required>
+        </div>
+        <div class="form-row">
+          <label for="unit_price_cents">Unit Price (cents)</label>
+          <input type="number" id="unit_price_cents" name="unit_price_cents" min="0" step="1" required>
+        </div>
+        <div class="form-row">
+          <label for="promo_type_select">Promotion</label>
+          <select id="promo_type_select" name="promo_type">
+            <option value="none" selected>None</option>
+            <option value="n_for_price">N for price</option>
+          </select>
+        </div>
+        <div id="promo_fields" style="display:none">
+          <div class="form-row">
+            <label for="promo_n_qty_input">N qty</label>
+            <input type="number" id="promo_n_qty_input" name="promo_n_qty_input" min="1" step="1" value="1">
+          </div>
+          <div class="form-row">
+            <label for="promo_price_cents_input">Special Price (cents)</label>
+            <input type="number" id="promo_price_cents_input" name="promo_price_cents_input" min="0" step="1" value="0">
+          </div>
+        </div>
+        <div style="margin-top: 12px; display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" class="btn" onclick="document.getElementById('product-modal').style.display='none'">Cancel</button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}

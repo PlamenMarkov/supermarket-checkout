@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Home{% endblock %}
+
+{% block stylesheets %}
+    <link rel="stylesheet" href="/css/home.css">
+{% endblock %}
+
+{% block javascripts %}
+    {{ parent() }}
+    <script src="/js/home.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            if (window.Home && typeof Home.init === 'function') {
+                Home.init();
+            }
+        });
+    </script>
+{% endblock %}
+
+{% block body %}
+    <div class="container">
+        <div>
+            <button type="button" id="admin-link" class="btn" onclick="location.href='/admin'">Administration</button>
+        </div>
+
+        <h1>Supermarket Checkout</h1>
+        <p>Enter items to buy as a continuous string of SKU letters. Example: <code>AAABBD</code></p>
+
+        <form id="checkout-form">
+            <label for="skus">Items (SKUs)</label>
+            <input id="skus" name="skus" type="text" placeholder="e.g. AAABBD" autocomplete="off" required>
+            <button id="checkout-btn" type="submit" class="btn">Checkout</button>
+        </form>
+
+        <div id="error" class="error" style="display:none"></div>
+
+        <div id="result"></div>
+    </div>
+{% endblock %}
+

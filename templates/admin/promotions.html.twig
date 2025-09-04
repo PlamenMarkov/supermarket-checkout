@@ -1,0 +1,81 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Administration — Promotions{% endblock %}
+
+{% block stylesheets %}
+  {{ parent() }}
+{% endblock %}
+
+{% block javascripts %}
+  {{ parent() }}
+  <script src="/js/admin-promotions.js"></script>
+  <script>
+    document.addEventListener('DOMContentLoaded', () => {
+      if (window.AdminPromotions && typeof AdminPromotions.init === 'function') {
+        AdminPromotions.init();
+      }
+    });
+  </script>
+{% endblock %}
+
+{% block body %}
+  <div class="container">
+    <div class="actions">
+      <button type="button" class="btn" onclick="location.href='/'">← Back to Home</button>
+      <button type="button" class="btn" onclick="location.href='/admin/orders'">Go to Orders</button>
+      <button type="button" class="btn" onclick="location.href='/admin/products'">Go to Products</button>
+    </div>
+    <h1>Promotions Management</h1>
+
+    <div class="actions">
+      <button id="add-promo-btn" class="btn">Add Promotion</button>
+    </div>
+
+    <table>
+      <thead>
+      <tr>
+        <th>ID</th>
+        <th>Product</th>
+        <th>Type</th>
+        <th class="num">N</th>
+        <th class="num">Special Price</th>
+        <th>Operations</th>
+      </tr>
+      </thead>
+      <tbody id="promotions-tbody"></tbody>
+    </table>
+  </div>
+
+  <div id="promo-modal" class="modal">
+    <div class="dialog">
+      <div class="header">
+        <h3 id="promo-modal-title">Promotion</h3>
+        <button id="promo-modal-close" class="close">✕</button>
+      </div>
+      <form id="promo-form">
+        <div class="form-row">
+          <label for="promo_product">Product</label>
+          <select id="promo_product" name="product_id"></select>
+        </div>
+        <div class="form-row">
+          <label for="promo_type">Type</label>
+          <select id="promo_type" name="type">
+            <option value="n_for_price">N for price</option>
+          </select>
+        </div>
+        <div class="form-row">
+          <label for="promo_n_qty">N qty</label>
+          <input type="number" id="promo_n_qty" name="n_qty" min="1" step="1" required>
+        </div>
+        <div class="form-row">
+          <label for="promo_special">Special Price (cents)</label>
+          <input type="number" id="promo_special" name="special_price_cents" min="0" step="1" required>
+        </div>
+        <div style="margin-top: 12px; display:flex; gap:8px; justify-content:flex-end;">
+          <button type="button" class="btn" onclick="document.getElementById('promo-modal').style.display='none'">Cancel</button>
+          <button type="submit" class="btn primary">Save</button>
+        </div>
+      </form>
+    </div>
+  </div>
+{% endblock %}
