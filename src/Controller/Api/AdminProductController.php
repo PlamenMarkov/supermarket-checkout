@@ -4,7 +4,6 @@ namespace App\Controller\Api;
 
 use App\Dto\ProductDto;
 use App\Exceptions\ValidationException;
-use App\Repository\ProductRepository;
 use App\Services\ProductService;
 use App\Transformer\ProductTransformer;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -17,15 +16,20 @@ use Symfony\Component\Routing\Attribute\Route;
 class AdminProductController extends AbstractController
 {
     public function __construct(
-        private readonly ProductRepository $products,
         private readonly ProductService $productService,
         private readonly ProductTransformer $productTransformer,
     ) {}
 
-    #[Route('', name: 'admin_products_index', methods: ['GET'])]
+    #[Route('', name: 'admin_products_list', methods: ['GET'])]
     public function index(): JsonResponse
     {
-        return $this->json($this->productTransformer->collection($this->products->findAllWithPromotions()));
+        return $this->json($this->productTransformer->collection($this->productService->list()));
+    }
+
+    #[Route('/{id}', name: 'admin_products_get_by_id', methods: ['GET'])]
+    public function getProductById(int $id): Response
+    {
+        return $this->json($this->productTransformer->toArray($this->productService->get($id)));
     }
 
     #[Route('', name: 'admin_products_create', methods: ['POST'])]
@@ -47,20 +51,6 @@ class AdminProductController extends AbstractController
         }
     }
 
-    #[Route('/{id}', name: 'admin_products_get_by_id', methods: ['GET'])]
-    public function getProductById(int $id): Response
-    {
-        $product = $this->products->find($id);
-        if (!$product) {
-            return $this->json(
-                ['error' => 'Product not found'],
-                Response::HTTP_NOT_FOUND
-            );
-        }
-
-        return $this->json($this->productTransformer->toArray($product));
-    }
-
     #[Route('/{id}', name: 'admin_products_update', methods: ['PUT'])]
     public function update(int $id, Request $request): Response
     {
@@ -68,7 +58,10 @@ class AdminProductController extends AbstractController
             $dto = ProductDto::fromArray($request->toArray());
             $product = $this->productService->update($id, $dto);
 
-            return $this->json($this->productTransformer->toArray($product, false));
+            return $this->json(
+                $this->productTransformer->toArray($product, false),
+                Response::HTTP_OK
+            );
         } catch (ValidationException $e) {
             return $this->json(
                 $e->toArray(),
