@@ -39,4 +39,14 @@ class PromotionRepository extends ServiceEntityRepository
             ->getQuery()
             ->getResult();
     }
+
+    public function findAll(): array
+    {
+        return $this->createQueryBuilder('pr')
+            ->leftJoin('pr.product', 'p')
+            ->addSelect('p')
+            ->orderBy('pr.id', 'DESC')
+            ->getQuery()
+            ->getResult();
+    }
 }

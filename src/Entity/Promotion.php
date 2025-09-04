@@ -84,11 +84,6 @@ class Promotion
         return $this;
     }
 
-    public function getNQuantity(): Quantity
-    {
-        return Quantity::of($this->nQty);
-    }
-
     public function getSpecialPriceCents(): int
     {
         return $this->specialPriceCents;
@@ -116,5 +111,10 @@ class Promotion
         $this->updatedAt = $updatedAt;
 
         return $this;
+    }
+
+    public function getNQuantity(): Quantity
+    {
+        return Quantity::of($this->nQty);
     }
 }
