@@ -79,6 +79,6 @@ final class Money
     public function __toString(): string
     {
         $amount = number_format($this->cents / 100, 2, '.', '');
-        return $this->currency->value . ' ' . $amount;
+        return $amount . ' ' . $this->currency->value;
     }
 }
