@@ -37,7 +37,7 @@ class CheckoutServiceTest extends TestCase
         });
 
         $checkoutService = new CheckoutService($em, $pricing, $this->dtoValidatorOk(), $products);
-        $order = $checkoutService->createOrder($dto);
+        $order = $checkoutService->checkoutOrder($dto);
 
         $this->assertSame(400, $order->getTotalCents());
         $this->assertCount(2, $order->getItems());
@@ -51,7 +51,7 @@ class CheckoutServiceTest extends TestCase
 
         $checkoutService = new CheckoutService($em, $pricing, $this->dtoValidatorWithViolations(1), $products);
         $this->expectException(ValidationException::class);
-        $checkoutService->createOrder(new OrderDto('!!'));
+        $checkoutService->checkoutOrder(new OrderDto('!!'));
     }
 
     public function testCreateOrderThrowsProductNotFoundException(): void
@@ -65,7 +65,7 @@ class CheckoutServiceTest extends TestCase
 
         $checkoutService = new CheckoutService($em, $pricing, $this->dtoValidatorOk(), $products);
         $this->expectException(NotFoundHttpException::class);
-        $checkoutService->createOrder(new OrderDto('Z'));
+        $checkoutService->checkoutOrder(new OrderDto('Z'));
     }
 
     private function dtoValidatorWithViolations(int $count): DtoValidatorService

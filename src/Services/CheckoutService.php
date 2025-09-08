@@ -22,7 +22,7 @@ readonly final class CheckoutService
         private ProductRepository      $productRepository,
     ) {}
 
-    public function createOrder(OrderDto $dto): Order
+    public function checkoutOrder(OrderDto $dto): Order
     {
         $this->dtoValidator->assertValid($dto);
 
@@ -31,7 +31,12 @@ readonly final class CheckoutService
         $this->em->beginTransaction();
 
         try {
-            return $this->persistOrder($skusCount);
+            $order = $this->createOrder($skusCount);
+            $this->em->persist($order);
+            $this->em->flush();
+            $this->em->commit();
+
+            return $order;
         } catch (\Throwable $e) {
             $this->em->rollback();
 
@@ -39,27 +44,23 @@ readonly final class CheckoutService
         }
     }
 
-    private function persistOrder(array $skusCount): Order
+    private function createOrder(array $skusCount): Order
     {
         $order = new Order();
-        $this->em->persist($order);
 
         $total = Money::ofCents(0);
         foreach ($skusCount as $sku => $qty) {
-            $total = $this->persistItem($sku, $order, $qty, $total);
+            $total = $this->createOrderItem($sku, $order, $qty, $total);
         }
 
         $order->setTotalCents($total->getCents())
             ->setStatus(OrderStatus::CREATED)
             ->setUpdatedAt(new \DateTimeImmutable());
 
-        $this->em->flush();
-        $this->em->commit();
-
         return $order;
     }
 
-    private function persistItem(string $sku, Order $order, mixed $qty, mixed $total): Money
+    private function createOrderItem(string $sku, Order $order, int $qty, Money $total): Money
     {
         $skuObject = Sku::fromString($sku);
 
@@ -72,10 +73,6 @@ readonly final class CheckoutService
 
         $order->addItem($item);
 
-        $total = $total->plus(Money::ofCents($item->getLineTotalCents()));
-
-        $this->em->persist($item);
-
-        return $total;
+        return $total->plus(Money::ofCents($item->getLineTotalCents()));
     }
 }

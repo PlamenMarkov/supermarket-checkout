@@ -25,7 +25,7 @@ class CheckoutController extends AbstractController
     {
         try {
             $dto = OrderDto::fromArray($request->toArray());
-            $order = $this->checkout->createOrder($dto);
+            $order = $this->checkout->checkoutOrder($dto);
 
             return $this->json(
                 $this->orderTransformer->toArray($order),
